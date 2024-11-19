@@ -16,6 +16,7 @@ from aiofiles import open as aiopen
 from pyrogram import idle
 from pyrogram.errors import PeerIdInvalid
 from pyrogram.enums import ChatMemberStatus, ChatType
+from pyrogram.types import Message
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, private, regex
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -133,19 +134,35 @@ async def dc_user(client, message):
     except Exception as e:
         await sendMessage(message, f"An error occurred: {str(e)}")
 
-# Command to get DC of a file
-async def dc_file(client, message):
+# DC info for file uploads (photo, video, audio, document)
+async def dc_file(client, message: Message):
     try:
-        # Check if the user replied to a file
-        if message.reply_to_message and message.reply_to_message.document:
-            file_id = message.reply_to_message.document.file_id
-            file = await client.get_file(file_id)
-            dc_id = file.dc_id  # Assuming dc_id is available (if not, check Pyrogram documentation)
-            await sendMessage(message, f"The DC of the file is: {dc_id}")
+        # Check if the message contains a file
+        if message.photo:
+            # If it's an image, get DC ID info
+            dc_id = message.photo.dc_id
+            await sendMessage(message, f"The DC ID of this image is: {dc_id}")
+        
+        elif message.video:
+            # If it's a video, get DC ID info
+            dc_id = message.video.dc_id
+            await sendMessage(message, f"The DC ID of this video is: {dc_id}")
+        
+        elif message.audio:
+            # If it's an audio, get DC ID info
+            dc_id = message.audio.dc_id
+            await sendMessage(message, f"The DC ID of this audio is: {dc_id}")
+        
+        elif message.document:
+            # If it's a document, get DC ID info
+            dc_id = message.document.dc_id
+            await sendMessage(message, f"The DC ID of this document is: {dc_id}")
+        
         else:
-            await sendMessage(message, "Please reply to a file to get its DC.")
+            await sendMessage(message, "Please send a valid file (image, video, audio, or document).")
+    
     except Exception as e:
-        await sendMessage(message, f"An error occurred: {str(e)}")
+        await sendMessage(message, f"Error: {str(e)}")
 
 async def ping(_, message):
     start_time = monotonic()
