@@ -137,24 +137,27 @@ async def dc_user(client, message):
 # DC info for file uploads (photo, video, audio, document)
 async def dc_file(client, message: Message):
     try:
-        # Check if the message contains a file
+        # Check if the message contains a photo
         if message.photo:
-            # If it's an image, get DC ID info
+            # If it's an image, get the DC ID info
             dc_id = message.photo.dc_id
             await sendMessage(message, f"The DC ID of this image is: {dc_id}")
         
+        # Check if the message contains a video
         elif message.video:
-            # If it's a video, get DC ID info
+            # If it's a video, get the DC ID info
             dc_id = message.video.dc_id
             await sendMessage(message, f"The DC ID of this video is: {dc_id}")
         
+        # Check if the message contains an audio file
         elif message.audio:
-            # If it's an audio, get DC ID info
+            # If it's an audio, get the DC ID info
             dc_id = message.audio.dc_id
             await sendMessage(message, f"The DC ID of this audio is: {dc_id}")
         
+        # Check if the message contains a document (e.g., a file)
         elif message.document:
-            # If it's a document, get DC ID info
+            # If it's a document, get the DC ID info
             dc_id = message.document.dc_id
             await sendMessage(message, f"The DC ID of this document is: {dc_id}")
         
@@ -163,6 +166,7 @@ async def dc_file(client, message: Message):
     
     except Exception as e:
         await sendMessage(message, f"Error: {str(e)}")
+
 
 async def ping(_, message):
     start_time = monotonic()
